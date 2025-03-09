@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\TrackApiRequests::class);
+
+        // Ajouter cette ligne pour désactiver CSRF sur les routes API
+        $middleware->skipWhen(
+            fn($request) => $request->is('api/*'),
+            [\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]
+        );
+
         // Vous pouvez également ajouter un alias si nécessaire
         $middleware->alias([
             'track.api.requests' => \App\Http\Middleware\TrackApiRequests::class,
