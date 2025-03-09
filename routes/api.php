@@ -14,14 +14,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Routes publiques pour l'authentification
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-
-Route::get('/test', function () {
-    return response()->json(['message' => 'Hello World!']);
+Route::middleware(['web'])->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::get('/test', function () {
+        return response()->json(['message' => 'Hello World!']);
+    });
 });
+// Route::post('/register', [AuthController::class, 'register']);
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+// Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 
 // Routes protégées avec middleware d'authentification et de tracking API
 Route::middleware(['auth:sanctum', \App\Http\Middleware\TrackApiRequests::class])->group(function () {
