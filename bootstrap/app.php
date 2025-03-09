@@ -14,23 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\TrackApiRequests::class);
 
-        // Spécifier les groupes de middleware pour les routes web et api
-        $middleware->web([
-            // Gardez VerifyCsrfToken ici pour les routes web
-            \Illuminate\Cookie\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ]);
-
-        $middleware->api([
-            // Ne pas inclure VerifyCsrfToken dans le groupe api
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // autres middleware api selon besoin
-        ]);
-
         // Vous pouvez également ajouter un alias si nécessaire
         $middleware->alias([
             'track.api.requests' => \App\Http\Middleware\TrackApiRequests::class,

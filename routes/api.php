@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Routes publiques pour l'authentification
-Route::middleware(['web'])->group(function () {
+Route::middleware(['api'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
