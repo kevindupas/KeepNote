@@ -52,20 +52,22 @@ class TaskController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Vérifier que la note appartient à l'utilisateur
-        $note = Note::where('id', $request->note_id)
-            ->where('user_id', Auth::id())
-            ->first();
+        // Vérifier que la note appartient à l'utilisateur, seulement si une note_id est fournie
+        if ($request->filled('note_id')) {
+            $note = Note::where('id', $request->note_id)
+                ->where('user_id', Auth::id())
+                ->first();
 
-        if (!$note) {
-            return response()->json([
-                'message' => 'Note non trouvée ou vous n\'avez pas les droits nécessaires'
-            ], 403);
+            if (!$note) {
+                return response()->json([
+                    'message' => 'Note non trouvée ou vous n\'avez pas les droits nécessaires'
+                ], 403);
+            }
         }
 
         $task = Task::create([
             'description' => $request->description,
-            'note_id' => $request->note_id,
+            'note_id' => $request->filled('note_id') ? $request->note_id : null,
             'user_id' => Auth::id(),
             'is_completed' => $request->is_completed ?? false,
             'subtasks' => $request->subtasks ?? [],
@@ -115,7 +117,7 @@ class TaskController extends Controller
 
         $validator = Validator::make($request->all(), [
             'description' => 'required|string|max:255',
-            'note_id' => 'exists:notes,id',
+            'note_id' => 'nullable|exists:notes,id',
             'is_completed' => 'boolean',
             'subtasks' => 'nullable|array',
         ]);
@@ -124,8 +126,8 @@ class TaskController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Si le note_id est modifié, vérifier que la nouvelle note appartient à l'utilisateur
-        if ($request->has('note_id') && $request->note_id != $task->note_id) {
+        // Si le note_id est modifié et n'est pas null, vérifier que la nouvelle note appartient à l'utilisateur
+        if ($request->filled('note_id') && $request->note_id != $task->note_id) {
             $note = Note::where('id', $request->note_id)
                 ->where('user_id', Auth::id())
                 ->first();
@@ -139,7 +141,7 @@ class TaskController extends Controller
 
         $task->update([
             'description' => $request->description,
-            'note_id' => $request->note_id ?? $task->note_id,
+            'note_id' => $request->has('note_id') ? $request->note_id : $task->note_id,
             'is_completed' => $request->is_completed ?? $task->is_completed,
             'subtasks' => $request->subtasks ?? $task->subtasks,
         ]);
