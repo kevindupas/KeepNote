@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'schedules' => [
+        App\Console\Scheduling\QrTokenCleanupSchedule::class,
+    ],
+
 ];
