@@ -17,12 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['api'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/auth/qr-login/{token}', [App\Http\Controllers\Api\QrAuthController::class, 'authenticate']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     Route::get('/test', function () {
         return response()->json(['message' => 'Hello World!']);
     });
 });
+
 // Route::post('/register', [AuthController::class, 'register']);
 // Route::post('/login', [AuthController::class, 'login']);
 // Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
